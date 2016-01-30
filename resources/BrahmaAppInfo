@@ -1,0 +1,6 @@
+APP_TITLE = HelloEntryPoint
+APP_DESCRIPTION = ARM9 entrypoint test application.
+APP_AUTHOR = d0k3
+
+PAYLOAD_MEM = 1
+VOODOO = 0xF
