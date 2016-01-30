@@ -30,3 +30,11 @@
 
 # Debug files
 *.dSYM/
+
+# User additions
+/backup
+/build
+/output
+/release
+
+.DS_Store

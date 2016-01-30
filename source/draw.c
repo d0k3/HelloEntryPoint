@@ -10,8 +10,6 @@
 #include "font.h"
 #include "draw.h"
 
-static char debugstr[DBG_N_CHARS_X * DBG_N_CHARS_Y] = { 0 };
-
 void ClearScreen(u8* screen, int width, int color)
 {
     if (color == COLOR_TRANSPARENT) color = COLOR_BLACK;
