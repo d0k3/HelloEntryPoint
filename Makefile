@@ -149,7 +149,6 @@ release:
 	@-make --no-print-directory brahma
 	@[ -d $(RELEASE) ] || mkdir -p $(RELEASE)
 	@[ -d $(RELEASE)/$(TARGET) ] || mkdir -p $(RELEASE)/$(TARGET)
-	@[ -d $(RELEASE)/scripts ] || mkdir -p $(RELEASE)/scripts
 	@cp $(OUTPUT_D)/Launcher.dat $(RELEASE)
 	@-cp $(OUTPUT).bin $(RELEASE)
 	@-cp $(OUTPUT).dat $(RELEASE)

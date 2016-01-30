@@ -3,7 +3,7 @@
 #include "hid.h"
 #include "i2c.h"
 
-#define DISPLAY_TEXT "Hello ARM9 Entry Point!"
+#define DISPLAY_TEXT "Hello ARM9 Entrypoint!"
 #define START_X 10
 #define START_Y 10
 
@@ -24,14 +24,12 @@ void PowerOff()
 
 int main()
 {
-    char clear_text[256] = { ' ' };
+    char clear_text[256] = { 0 };
     bool use_top = true;
     u32 cur_x = START_X;
     u32 cur_y = START_Y;
     
-    clear_text[strnlen(DISPLAY_TEXT, 256)] = '\0';
-    
-    ClearScreenFull(true, true);
+    for (u32 i = 0; i < strnlen(DISPLAY_TEXT, 255); clear_text[i++] = ' ');
     
     while( true ) {
         DrawStringF(cur_x, cur_y, use_top, DISPLAY_TEXT);
@@ -42,8 +40,11 @@ int main()
             break;
         if (pad_state & BUTTON_L1)
             increment = 10;
-        if (pad_state & BUTTON_R1)
+        if (pad_state & BUTTON_R1) {
+            cur_x = START_X;
+            cur_y = START_Y;
             use_top = !use_top;
+        }
         if (pad_state & BUTTON_UP)
             cur_y = (cur_y >= increment) ? cur_y - increment : 0;
         else if (pad_state & BUTTON_LEFT)
