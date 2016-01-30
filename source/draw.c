@@ -10,6 +10,7 @@
 #include "font.h"
 #include "draw.h"
 
+/*
 void ClearScreen(u8* screen, int width, int color)
 {
     if (color == COLOR_TRANSPARENT) color = COLOR_BLACK;
@@ -31,6 +32,7 @@ void ClearScreenFull(bool clear_top, bool clear_bottom)
         ClearScreen(BOT_SCREEN1, SCREEN_WIDTH_BOT, STD_COLOR_BG);
     }
 }
+*/
 
 void DrawCharacter(u8* screen, int character, int x, int y, int color, int bgcolor)
 {

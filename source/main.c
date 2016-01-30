@@ -24,19 +24,19 @@ void PowerOff()
 
 int main()
 {
-    char clear_text[256] = { 0 };
+    char clear_text[64] = { 0 };
     bool use_top = true;
     u32 cur_x = START_X;
     u32 cur_y = START_Y;
     
-    for (u32 i = 0; i < strnlen(DISPLAY_TEXT, 255); clear_text[i++] = ' ');
+    memset(clear_text, (int) ' ', strnlen(DISPLAY_TEXT, 63));
     
     while( true ) {
         DrawStringF(cur_x, cur_y, use_top, DISPLAY_TEXT);
         u32 pad_state = InputWait();
         u32 increment = 1;
         DrawStringF(cur_x, cur_y, use_top, clear_text);
-        if (pad_state & BUTTON_B)
+        if (pad_state & (BUTTON_B | BUTTON_START))
             break;
         if (pad_state & BUTTON_L1)
             increment = 10;
