@@ -131,6 +131,12 @@ cakehax: submodules common
 cakerop: cakehax
 	@make DATNAME=$(TARGET).dat DISPNAME=$(TARGET) GRAPHICS=../resources/CakesROP -C CakesROP
 	@mv CakesROP/CakesROP.nds $(OUTPUT_D)/$(TARGET).nds
+    
+cakebrah: cakehax
+	@cp resources/BrahmaIcon.png Cakebrah/icon.png
+	@make name=$(TARGET).dat APP_TITLE="$(APP_TITLE)" APP_DESCRIPTION="$(APP_DESCRIPTION)" APP_AUTHOR="$(APP_AUTHOR)" -C Cakebrah
+	@mv CakeBrah/*.3dsx $(OUTPUT_D)
+	@mv CakeBrah/*.smdh $(OUTPUT_D)
 
 brahma: submodules bootstrap
 	@[ -d BrahmaLoader/data ] || mkdir -p BrahmaLoader/data
