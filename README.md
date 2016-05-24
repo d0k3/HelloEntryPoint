@@ -6,3 +6,5 @@ Includes:
 * Brahmaloader (Homebrew Launcher) entry point
 * CakeHax entry point
 * CakeROP entry point
+* CakeBrah (Homebrew Launcher) entry point
+* OldSpider (2xrsa) entry point

@@ -20,14 +20,14 @@ export TARGET	:=	HelloEntryPoint
 BUILD		:=	build
 SOURCES		:=	source source/abstraction
 DATA		:=	data
-INCLUDES	:=	include source
+INCLUDES	:=	source
 
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-ARCH	:=	-mthumb -mthumb-interwork
+ARCH	:=	-mthumb -mthumb-interwork -flto
 
-CFLAGS	:=	-g -Wall -O2\
+CFLAGS	:=	-g -Wall -Wextra -Wpedantic -pedantic -O2\
 			-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
 			-ffast-math -std=c99\
 			$(ARCH)
@@ -48,6 +48,8 @@ LDFLAGS	=	-nostartfiles -g $(ARCH) -Wl,-Map,$(TARGET).map
 ifeq ($(EXEC_METHOD),GATEWAY)
 	LDFLAGS += --specs=../gateway.specs
 else ifeq ($(EXEC_METHOD),BOOTSTRAP)
+	LDFLAGS += --specs=../bootstrap.specs
+else ifeq ($(EXEC_METHOD),OLDSPIDER)
 	LDFLAGS += --specs=../bootstrap.specs
 endif
 
@@ -103,7 +105,7 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
-.PHONY: common clean all gateway bootstrap cakehax cakerop brahma release
+.PHONY: common clean all gateway bootstrap cakehax cakerop brahma oldspider release
 
 #---------------------------------------------------------------------------------
 all: brahma
@@ -119,6 +121,10 @@ gateway: common
 	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile EXEC_METHOD=GATEWAY
 	@cp resources/LauncherTemplate.dat $(OUTPUT_D)/Launcher.dat
 	@dd if=$(OUTPUT).bin of=$(OUTPUT_D)/Launcher.dat bs=1497296 seek=1 conv=notrunc
+
+oldspider: common
+	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile EXEC_METHOD=OLDSPIDER
+	@mv $(OUTPUT).bin $(OUTPUT_D)/arm9.bin
 
 bootstrap: common
 	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile EXEC_METHOD=BOOTSTRAP
