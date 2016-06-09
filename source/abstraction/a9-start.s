@@ -1,41 +1,11 @@
-#ifdef EXEC_GATEWAY
+#ifdef EXEC_A9LH
 
 .section .text.start
-.global _start
 .align 4
-.arm
-
-_vectors:
-    ldr pc, =InfiniteLoop
-    .pool
-    ldr pc, =InfiniteLoop
-    .pool
-    ldr pc, =InfiniteLoop
-    .pool
-    ldr pc, =InfiniteLoop
-    .pool
-    ldr pc, =InfiniteLoop
-    .pool
-    ldr pc, =InfiniteLoop
-    .pool
-
+.global _start
 _start:
-    ldr sp,=0x22140000
-
-    @@wait for the arm11 kernel threads to be ready
-    ldr r1, =0x10000
-    waitLoop9:
-        sub r1, #1
-
-        cmp r1, #0
-        bgt waitLoop9
-
-    ldr r1, =0x10000
-    waitLoop92:
-        sub r1, #1
-
-        cmp r1, #0
-        bgt waitLoop92
+    @ Change the stack pointer
+    mov sp, #0x27000000
 
     @ Disable caches / mpu
     mrc p15, 0, r4, c1, c0, 0  @ read control register
@@ -58,9 +28,7 @@ _start:
     ldr r5, =0x20000035	@ 20000000 128M
     ldr r6, =0x1FF00027	@ 1FF00000 1M
     ldr r7, =0x1800002D	@ 18000000 8M
-    mov r10, #0x25
-    mov r11, #0x25
-    mov r12, #0x25
+    mov r8, #0x25
     mcr p15, 0, r0, c6, c0, 0
     mcr p15, 0, r1, c6, c1, 0
     mcr p15, 0, r2, c6, c2, 0
@@ -69,9 +37,10 @@ _start:
     mcr p15, 0, r5, c6, c5, 0
     mcr p15, 0, r6, c6, c6, 0
     mcr p15, 0, r7, c6, c7, 0
-    mcr p15, 0, r10, c3, c0, 0	@ Write bufferable 0, 2, 5
-    mcr p15, 0, r11, c2, c0, 0	@ Data cacheable 0, 2, 5
-    mcr p15, 0, r12, c2, c0, 1	@ Inst cacheable 0, 2, 5
+    mcr p15, 0, r8, c2, c0, 0	@ Data cacheable 0, 2, 5
+    mcr p15, 0, r8, c2, c0, 1	@ Inst cacheable 0, 2, 5
+    mov r8, #0x5 @ Fixes payloads which don't like FCRAM as "data bufferable"
+    mcr p15, 0, r8, c3, c0, 0	@ Write bufferable 0, 2, 5
 
     @ Enable caches
     mrc p15, 0, r4, c1, c0, 0  @ read control register
@@ -91,13 +60,10 @@ _start:
     ldr r0, =0x10000020
     mov r1, #0x340
     str r1, [r0]
-    
-    ldr sp,=0x22160000
-    ldr    r3, =main
-    blx r3
-.pool
 
-InfiniteLoop:
-    b InfiniteLoop
+    bl main
 
-#endif // EXEC_GATEWAY
+.die:
+    b .die
+
+#endif // EXEC_A9LH

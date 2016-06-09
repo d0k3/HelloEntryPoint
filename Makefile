@@ -47,10 +47,10 @@ LDFLAGS	=	-nostartfiles -g $(ARCH) -Wl,-Map,$(TARGET).map
 
 ifeq ($(EXEC_METHOD),GATEWAY)
 	LDFLAGS += --specs=../gateway.specs
-else ifeq ($(EXEC_METHOD),BOOTSTRAP)
-	LDFLAGS += --specs=../bootstrap.specs
+else ifeq ($(EXEC_METHOD),A9LH)
+	LDFLAGS += --specs=../a9lh.specs
 else ifeq ($(EXEC_METHOD),OLDSPIDER)
-	LDFLAGS += --specs=../bootstrap.specs
+	LDFLAGS += --specs=../a9lh.specs
 endif
 
 LIBS	:=
@@ -105,15 +105,15 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
-.PHONY: common clean all gateway bootstrap cakehax cakerop brahma oldspider release
+.PHONY: common clean all gateway a9lh cakehax cakerop brahma release
 
 #---------------------------------------------------------------------------------
-all: brahma
+all: a9lh
 
 common:
 	@[ -d $(OUTPUT_D) ] || mkdir -p $(OUTPUT_D)
 	@[ -d $(BUILD) ] || mkdir -p $(BUILD)
-    
+
 submodules:
 	@-git submodule update --init --recursive
 
@@ -122,29 +122,31 @@ gateway: common
 	@cp resources/LauncherTemplate.dat $(OUTPUT_D)/Launcher.dat
 	@dd if=$(OUTPUT).bin of=$(OUTPUT_D)/Launcher.dat bs=1497296 seek=1 conv=notrunc
 
-oldspider: common
+2xrsa: common
 	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile EXEC_METHOD=OLDSPIDER
+	@make --no-print-directory -C 2xrsa
 	@mv $(OUTPUT).bin $(OUTPUT_D)/arm9.bin
+	@mv $(CURDIR)/2xrsa/bin/arm11.bin $(OUTPUT_D)/arm11.bin
 
-bootstrap: common
-	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile EXEC_METHOD=BOOTSTRAP
+a9lh: common
+	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile EXEC_METHOD=A9LH
 
 cakehax: submodules common
 	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile EXEC_METHOD=GATEWAY
 	@make dir_out=$(OUTPUT_D) name=$(TARGET).dat -C CakeHax bigpayload
 	@dd if=$(OUTPUT).bin of=$(OUTPUT).dat bs=512 seek=160
-    
+
 cakerop: cakehax
 	@make DATNAME=$(TARGET).dat DISPNAME=$(TARGET) GRAPHICS=../resources/CakesROP -C CakesROP
 	@mv CakesROP/CakesROP.nds $(OUTPUT_D)/$(TARGET).nds
-    
+
 cakebrah: cakehax
 	@cp resources/BrahmaIcon.png Cakebrah/icon.png
 	@make name=$(TARGET).dat APP_TITLE="$(APP_TITLE)" APP_DESCRIPTION="$(APP_DESCRIPTION)" APP_AUTHOR="$(APP_AUTHOR)" -C Cakebrah
 	@mv CakeBrah/*.3dsx $(OUTPUT_D)
 	@mv CakeBrah/*.smdh $(OUTPUT_D)
 
-brahma: submodules bootstrap
+brahma: submodules a9lh
 	@[ -d BrahmaLoader/data ] || mkdir -p BrahmaLoader/data
 	@cp $(OUTPUT).bin BrahmaLoader/data/payload.bin
 	@cp resources/BrahmaAppInfo BrahmaLoader/resources/AppInfo
@@ -155,14 +157,18 @@ brahma: submodules bootstrap
 	
 release:
 	@rm -fr $(BUILD) $(OUTPUT_D) $(RELEASE)
-	@make --no-print-directory gateway
+	@-make --no-print-directory 2xrsa
+	@rm -fr $(BUILD) $(OUTPUT).bin $(OUTPUT).elf
+	@-make --no-print-directory gateway
 	@-make --no-print-directory cakerop
 	@rm -fr $(BUILD) $(OUTPUT).bin $(OUTPUT).elf $(CURDIR)/$(LOADER)/data
-	@-make --no-print-directory brahma
+	@make --no-print-directory brahma
 	@[ -d $(RELEASE) ] || mkdir -p $(RELEASE)
 	@[ -d $(RELEASE)/$(TARGET) ] || mkdir -p $(RELEASE)/$(TARGET)
-	@cp $(OUTPUT_D)/Launcher.dat $(RELEASE)
-	@-cp $(OUTPUT).bin $(RELEASE)
+	@-cp $(OUTPUT_D)/Launcher.dat $(RELEASE)
+	@-cp $(OUTPUT_D)/arm9.bin $(RELEASE)
+	@-cp $(OUTPUT_D)/arm11.bin $(RELEASE)
+	@cp $(OUTPUT).bin $(RELEASE)
 	@-cp $(OUTPUT).dat $(RELEASE)
 	@-cp $(OUTPUT).nds $(RELEASE)
 	@-cp $(OUTPUT).3dsx $(RELEASE)/$(TARGET)
@@ -175,6 +181,7 @@ clean:
 	@-make clean --no-print-directory -C CakeHax
 	@-make clean --no-print-directory -C CakesROP
 	@-make clean --no-print-directory -C CakeBrah
+	@-make clean --no-print-directory -C 2xrsa
 	@-make clean --no-print-directory -C BrahmaLoader
 	@rm -fr $(BUILD) $(OUTPUT_D) $(RELEASE)
 
