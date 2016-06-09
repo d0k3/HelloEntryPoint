@@ -13,3 +13,7 @@
 	path = CakeBrah
 	url = https://github.com/mid-kid/CakeBrah
 	ignore = dirty
+[submodule "2xrsa"]
+	path = 2xrsa
+	url = https://github.com/b1l1s/2xrsa
+	ignore = dirty
