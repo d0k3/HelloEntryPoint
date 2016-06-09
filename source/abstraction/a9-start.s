@@ -37,10 +37,9 @@ _start:
     mcr p15, 0, r5, c6, c5, 0
     mcr p15, 0, r6, c6, c6, 0
     mcr p15, 0, r7, c6, c7, 0
+    mcr p15, 0, r8, c3, c0, 0	@ Write bufferable 0, 2, 5
     mcr p15, 0, r8, c2, c0, 0	@ Data cacheable 0, 2, 5
     mcr p15, 0, r8, c2, c0, 1	@ Inst cacheable 0, 2, 5
-    mov r8, #0x5 @ Fixes payloads which don't like FCRAM as "data bufferable"
-    mcr p15, 0, r8, c3, c0, 0	@ Write bufferable 0, 2, 5
 
     @ Enable caches
     mrc p15, 0, r4, c1, c0, 0  @ read control register
