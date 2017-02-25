@@ -23,14 +23,10 @@ void ClearScreen(u8* screen, int width, int color)
 
 void ClearScreenFull(bool clear_top, bool clear_bottom)
 {
-    if (clear_top) {
-        ClearScreen(TOP_SCREEN0, SCREEN_WIDTH_TOP, STD_COLOR_BG);
-        ClearScreen(TOP_SCREEN1, SCREEN_WIDTH_TOP, STD_COLOR_BG);
-    }
-    if (clear_bottom) {
-        ClearScreen(BOT_SCREEN0, SCREEN_WIDTH_BOT, STD_COLOR_BG);
-        ClearScreen(BOT_SCREEN1, SCREEN_WIDTH_BOT, STD_COLOR_BG);
-    }
+    if (clear_top)
+        ClearScreen(TOP_SCREEN, SCREEN_WIDTH_TOP, STD_COLOR_BG);
+    if (clear_bottom)
+        ClearScreen(BOT_SCREEN, SCREEN_WIDTH_BOT, STD_COLOR_BG);
 }
 */
 
@@ -72,13 +68,5 @@ void DrawStringF(int x, int y, bool use_top, const char *format, ...)
     vsnprintf(str, 512, format, va);
     va_end(va);
 
-    for (char* text = strtok(str, "\n"); text != NULL; text = strtok(NULL, "\n"), y += 10) {
-        if (use_top) {
-            DrawString(TOP_SCREEN0, text, x, y, STD_COLOR_FONT, STD_COLOR_BG);
-            DrawString(TOP_SCREEN1, text, x, y, STD_COLOR_FONT, STD_COLOR_BG);
-        } else {
-            DrawString(BOT_SCREEN0, text, x, y, STD_COLOR_FONT, STD_COLOR_BG);
-            DrawString(BOT_SCREEN1, text, x, y, STD_COLOR_FONT, STD_COLOR_BG);
-        }
-    }
+    DrawString((use_top) ? TOP_SCREEN : BOT_SCREEN, str, x, y, STD_COLOR_FONT, STD_COLOR_BG);
 }

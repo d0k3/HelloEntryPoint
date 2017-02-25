@@ -36,3 +36,6 @@
     ((((u64) getle32(d+4))<<32) | ((u64) getle32(d)))
 #define align(v,a) \
     (((v) % (a)) ? ((v) + (a) - ((v) % (a))) : (v))
+
+#define ENTRY_BRAHMA        (1)
+#define ENTRY_GATEWAY       (2)
