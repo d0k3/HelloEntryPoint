@@ -2,7 +2,8 @@
 A simple test application for various ARM9 entrypoints
 
 Includes:
-+ ARM9loaderhax entry point
+* ARM9loaderhax entry point
+* Boot9strap (FIRM) entry point
 * Gateway 4.x Launcher.dat entry point
 * Brahmaloader (Homebrew Launcher) entry point
 * CakeHax entry point
