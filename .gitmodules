@@ -17,3 +17,7 @@
 	path = 2xrsa
 	url = https://github.com/b1l1s/2xrsa
 	ignore = dirty
+[submodule "firmtool"]
+	path = firmtool
+	url = https://github.com/TuxSH/firmtool.git
+	ignore = dirty
